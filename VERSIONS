@@ -1,0 +1,376 @@
+1.3.4 (2007-03-31)
+* Started using the SWT S-Leak application to test for application resource leakage.
+* Reports of a few issues with 800K images.  UniDOS in particular doesn't appear to be
+  recognized appropriately.  This was due to a mix-up in setting the the image ordering.
+* Fixed the bug where the import of a binary file does not set the address for DOS images.
+* Fixed bug that where a file cound not be exported as raw binary.  (Crashed AppleCommander.)
+* Raw binary files may now be imported - just check the raw image checkbox in the import
+  wizard.
+* Prepare for internationalization (I18N).  Started as a simplification process but it
+  got carried away.  Text is stored in text bundles throughout the code.  The files
+  end with ____Bundle.properties.  The groupings are Storage, Compiler, Ui, and
+  Text; directories relate to the package.  Contributions are more than welcome
+  seeing as I know very little German and it's unlikely that I'll get my wife to
+  spend time translating to Spanish.
+* Updates per Eclipse 3.0 recommendations.
+* Resolve OS X issues where window cannot come to the foreground. (J Matthews)
+* Add Apple Pascal writing capability. (J Matthews)
+
+1.3.3 (2004-06-18)
+* Repackage code - packages were getting a bit large.  The goal is to make class
+  structure/placement more logical.
+  GUI:
+  - Moved the SWT wizards into their own packages;
+  - Separated utility classes into the util package;
+  - Main application windows remain in swt package.
+  Storage:
+  - Moved OS formats into their respective packages in the "os" package
+    (dos33, prodos, cpm, rdos, pascal);
+  - Filters are now in the filters package.
+  - General storage classes remain under storage (Disk, FormattedDisk, etc).
+* Added formatted assembly FileFilter.  Understands Merlin format source files.
+  Need to recognize various formats - T.*, *.S, etc.  Need examples for other
+  formats (Orca, APW, etc).
+* File viewer window now scrolls an appropriate amount: PgUp/PgDn, arrows, 
+  mousewheel all work (must select content area first of course).
+* Wizard windows no longer show up with the title bar off the screen.
+* Refactored FileViewerWindow.  Created supporting FilterAdapter classes as well as 
+  (presumably) reusable ContentAdapters.  Started caching the filtered content for
+  a little speed improvement when switching filters (native, hex, raw) in the FileView.
+* Hans Otten provided information on Apple Pascal's formatting of ".text" files - they
+  are now read correctly with appropriate character spacing and header section is ignored.
+* Fixed error where viewing an invalid graphics file crashed AppleCommander (typically was
+  too short).  This can be done by context menu -> View As -> Graphics.
+* Further automate build (and web site) deployment.
+  Ant now builds source zip, GUI JAR, command-line jar, javadoc, and website.  Website zip
+  file only needs to be extracted into the web root to be deployed.  Windows executable is
+  scripted but not plugged into the Ant script at this time.
+
+1.3.2 (2004-06-05)
+* Print file listing or full disk listing (including subdirectories or multiple
+  volumes).
+* Added support for Super Hi-Res 3200 color format (PIC of 38400 bytes, file type
+  $C1 and auxiliary type $0002).
+* Updated preferences to remember the following directory locations:
+	- Open
+	- Save/Save As (new)
+	- Import (new)
+	- Export
+	- Compile
+* Added support for Finder Icons File ($CA or "ICN").
+* Added CP/M disk image support.
+* Restructured how AppleCommander manages disk ordering.  This simplifies the
+  manner in which various disk ordering schemes are implemented, and makes it
+  possible to translate between ordering schemes.
+* Support for nibble images (*.NIB) added.  Can read and write to the images
+  as long as that format supports writing.
+* To support nibble images, changed the structure surrounding the disk image
+  for a Disk.  There now is an ImageOrder which manages the ordering of data on
+  the image and supplies low-level read and write routines (track/sector and 
+  block).  An ImageOrder holds data in an image layout - this allows the generic
+  byte array and 2IMG layouts to be abstracted away from an images order.  This
+  does add interaction complexity but actually simplified the Disk class.
+* Viewing or double-clicking on a directory will navigate into that directory.
+* Viewing a deleted file no longer crashes AppleCommander - a warning message
+  is displayed.
+* Updated Export Graphics wizard and export right-click options.
+* Add the ability to change physical order too (DOS <=> ProDOS <=> Nibble)
+  on 140KB images.
+* Add ability to compare disks - regardless of physical order.
+* Started using Gimp for images (instead of Microsoft Photo Draw 2).
+* Added a "View As" menu pick in context menu.  (Just Text or Graphics at this time.)
+
+1.3.1 (2003-12-12)
+* Short-cut keys have been implemented.
+  - From AppleCommander window:
+    - CTRL+O = Open a disk image
+    - CTRL+C = Create a new disk image
+    - CTRL+A = About...
+  - From disk window
+    - Toolbar shortcuts:
+      - F2 = Standard file view
+      - F3 = Native file view
+      - F4 = Detail file view
+      - F5 = Show deleted files
+      - CTRL+I = Import files wizard
+      - CTRL+S = Save
+      - CTRL+SHIFT+S = Save As
+    - Directory shortcuts (in addition to toolbar shortcuts)
+      - "+" = expand one level
+      - "-" = close one level
+      - CTRL+"+" = expand fully
+      - CTRL+"-" = close fully
+    - File shortcuts (in addition to toolbar shortcuts)
+      - CTRL+E = Export file wizard
+      - CTRL+C = Compile BASIC program (BETA)
+      - CTRL+V = View file (later version)
+      - CTRL+D = Delete file
+* Spent time ensuring that buttons, context menus, and shortcuts are enabled or
+  disabled as appropriate.
+* Save does not allow the disk image location to be chosen for new images. (Maybe
+  the wizard should pay more attention?)
+  - Implemented Save As
+  - A save on a new image invokes Save As
+* File preview supports:
+  - BASIC programs (Applesoft and Integer BASIC); Applesoft BASIC is colored
+  - Graphics images (same as supported by the graphics export function)
+  - Appleworks (database, spreadsheet, word processor)
+  - Text files
+  - Hex dump of all the above
+  - "Raw" format of all of the above; this includes all data as read from disk
+    including length and starting address as well as full sectors/blocks
+  - Shortcuts available:
+  	- F2 = Native format view (as applicable)
+  	- F3 = Hex dump view
+  	- F4 = Raw hex dump of disk bytes (includes length or address start along
+  	       with all bytes stored on disk - a multiple of 256 or 512 depending
+  	       on disk format)
+  	- CTRL+A = Select all (only text formats)
+  	- CTRL+C = Copy to clipboard (only text formats)
+  	- CTRL+P = Print
+* Printing is available from the file preview.
+* Copy is avilable from file preview except for images.
+* Opening an invalid disk image (or a file that is not a disk image) no longer
+  crashes AppleCommander.
+* Provide a command-line interface - John Matthews "ac" is now supplied as part
+  of the AppleCommander distribution.  If AppleCommander gets no command-line
+  arguments, the GUI version is launched.  Otherwise, AppleCommander reserves
+  the following messages:
+  		-swt = force SWT version
+  		-swing = force Swing version (N/A - may be removed)
+  		-command = force command interpreter (not done - may be superceded by
+  		    the "ac" utility)
+  		-help or -? = general help messages
+  Everything else is passed on to John's "ac" command-line version (from the
+  application help):
+		AppleCommander command line options:
+		-l <imagename> list directory of image.
+		-e <filename> <imagename> export file from image to stdout.
+		-g <filename> <imagename> get raw file from image to stdout.
+		-p <destname> <type> <addr> <imagename> put stdin
+		   in destname on image, using file type and address.
+		-d <filename> <imagename> delete file from image.
+		-p140 <imagename> <volname> create a 140K ProDOS image.
+		-p800 <imagename> <volname> create a 800K ProDOS image.
+
+1.3.0 (2003-12-05)
+* HDV disks are not always created to their full capacity.  AppleCommander, however,
+  assumes that the size of the file on disk is the size of the disk.  (Really!)
+  This is an issue because the ProDOS bitmap indicates there is a certain
+  amount of space and AppleCommander just assumes that the data exists.
+* Incorporated fixes from John Matthews.  See:
+	http://www.wright.edu/~john.matthews/ac.html
+* Early release of Applesoft BASIC compiler.  This currently is limited to assembly
+  of small programs.  If a command is not compiled, you are likely to just get an
+  error about expecting a line number.  Expressions are not very complete.  Supported
+  commands are:
+  		  END, FLASH, FOR, GOTO, GR, HCOLOR, HGR, HGR2, HOME, HPLOT,
+  		  HTAB, INVERSE, NEXT, NORMAL, PRINT, RETURN, TEXT, VTAB
+  Unsupported commands are:
+          ABS, AND, ASC, AT, ATN, CALL, CHR$, CLEAR, COLOR=, CONT, COS,
+          DATA, DEF, DEL, DIM, DRAW, EXP, FN, FRE, GET, GOSUB, GR, HIMEM:, 
+          HLIN, IF, IN#, INPUT, INT, LEFT$, LEN, LET, LIST, LOAD, LOG, 
+          LOMEM:, MID$, NEW, NOT, NOTRACE, ON, ONERR, OR, PDL, PEEK, PLOT, 
+          POKE, POP, POS, PR#, READ, RECALL, REM, RESTORE, RESUME, RIGHT$, 
+          RND, ROT=, RUN, SAVE, SCALE=, SCRN, SGN, SHLOAD, SIN, SPC, 
+          SPEED=, SQR, STEP, STOP, STORE, STR$, TAB, TAN, THEN, TO, TRACE, 
+          USR, VAL, VLIN, WAIT, XDRAW, &
+  Note that the compiler is not very sophisticated.
+* Updated build notes and process.
+* DELETE does not seem to delete in all circumstances.  (JM caught this one.)
+
+1.2.3 (2003-04-13)
+* Separated image support for GraphicsFileFilter.  This allows easier preparation
+  for compiling AppleCommander as a Windows executable (and allows limited image
+  support to boot).
+* Compile into native executable (Windows works now).
+* Work on identifying why GCJ introduces slow performance to some areas.  This
+  appears to be resolved with an early build of GCJ 3.3.
+
+1.2.2 (2003-03-15)
+* ProDOS disks now re-use deleted file entries.  Prior to this fix,
+  deleted entries were never re-used.  If importing many files, a 
+  "Disk Full" error would be generated rather quickly.
+* ProDOS file entries do not generate spurious file entries.  There
+  was no method of detecting unused entries in pre-1.2.2 code.
+* Import file specification should only allow address editing if the filetype
+  requires it.
+* Fixed parsing of filetype definitions for ProDOS volumes.
+* Need to be able to import into a directory in ProDOS.  This will most
+  likely involve adding an interface indicating a (writable) directory.
+  This interface would be applied to both disks as well as file entries,
+  if appropriate.
+* ProDOS subdirectories need to allocate another block as they fill up; otherwise
+  the directory is limited to the number of entries that fit within the allocated
+  space.
+* Import now sports a progress indicator and identifies which file is being
+  imported.
+* Popup dialogs are now centered above the controlling window instead of popping
+  up randomly.
+* Added a Hex Dump file filter that displays offset into file, hex bytes, and
+  the ASCII code.
+* AppleCommander is now being built by an ANT script instead of by the
+  Eclipse menu pick.
+
+1.2.1 (2003-03-01)
+* Now carries margin setting through, sets font to Courier New (more
+  realistic formatting), and fixes boldface not being turned off
+  correctly when converting AWP files to RTF format.
+* Import could/should choose the filetype based upon the file extension for files
+  being imported. Mostly useful for ProDOS; unless a filetype mapping is 
+  introduced.
+* Export of AppleWorks Data Base files.
+* Export of AppleWorks Spread Sheet files.
+* Fixed minor issue with ProDOS disks where files at the 128K border would
+  be grown (incorrectly) into a Tree file (instead of a Sapling).
+* Import of multiple files fails after multiple imports.  This was an issue
+  with ProDOS files >128K ("Tree" files).  The delete code didn't handle the
+  master index block appropriately when blocks numbered zero were present
+  (normally indicating the end of file).
+* DOS 3.3 was not writing correct number of sectors if a file was more than
+  256 sectors long.
+* DOS 3.3 was not managing deleted file entries appropriately and tried to
+  work with track $FF.
+* Fixed offset calculation for 800K DOS organized disks.  This primarily 
+  affected UniDOS.
+* Import menu should be in directory pane instead of file pane.
+* The information tab does not get updated.  Now that the disk can be modified,
+  this page needs to be updated when shown.
+
+1.2.0 (2003-02-11)
+* Can now create disk images. For the moment, these images are not 
+  bootable (including hard disk images) - they do however boot a 
+  nifty title screen... 
+* Files can now be imported into disks. Formats that support this 
+  are DOS 3.3 and ProDOS formats. (Pascal and RDOS will come at a 
+  later point.) 
+* The AppleWorks export now has an option for exporting to 
+  Rich-Text Format (RTF). This format can be loaded into many 
+  word-processors easily. 
+* The graphics export option now supports Super High-Res images. 
+  Both unpacked and packed formats. These are essentially raw dumps 
+  from the IIGS memory that were saved to disk. 
+* Files can be deleted. 
+* Any changes to a disk image can be saved. Please be careful! It's 
+  easy enough to keep a backup copy of your work these days. 
+* Two new DOS derivitaves are available: UniDOS and OzDOS (both are 
+  800K formats). 
+* Import from right-click menu needs to be enabled.
+
+1.1.1 (2002-11-23)
+* Fixed AppleWorks upper/lower case filename resolution.  Human memory 
+  proves to be rusty - fortunately, the folks at gno.org have a good 
+  reference.  See:
+        http://www.gno.org/pub/apple2/doc/apple/filetypes/ftn.1a.xxxx
+* Extract AppleWorks word processor (AWP) files.  Extracts as raw text 
+  or HTML (semi formatted).  See
+                http://www.gno.org/pub/apple2/doc/apple/filetypes/ftn.1a.xxxx
+  for a description of the AppleWorks Word Processor file type.
+* Expanded wizard to include AppleWorks Word Processor format/rendering 
+  options (text or html).
+* If a filter is chosen via the drop-down menu on the button, the button 
+  thinks it was clicked.  Fixed.
+* Exporting a file now warns that a file exists and will as if it should 
+  be overwritten.
+* Reorganized the user-interface classes.  In particular, segmented 
+  DiskWindow into multiple classes (each tab is a separate class now).
+* Added user preferences to AppleCommander.  Currently only tracks the disk 
+  image directory and the export directory.
+* Attempt to identify file filter based on file type, size, and whatever 
+  else makes sense.
+* Mark all files as GPL.
+* Allow multiple file exports.
+
+1.1.0 (2002-11-12)
+* AppleCommander still not starting in Windows 98.  InputStream used in 
+  image loading was not being closed.  Did not resolve issue.
+* Raw extract of file data.
+* Extract binary files (differs from raw extract by paying attention 
+  to file lengths and any additional overhead which the operating system 
+  may store.
+* Extract files as text.
+* Extract Applesoft files by converting tokens to strings.
+* Extract Integer Basic files by converting tokens to strings.
+* RDOS files are not being read correctly; maybe this is an issue with 
+  the sector skew? Resolved that RDOS images are apprantly 13 sectors. 
+  Updated accordingly.
+* Fixed bug in DOS Applesoft and Binary file length calculations.  
+  Deleted file entries were (a) not being detected correctly which 
+  caused (b) the read of file data to crash AppleCommander.  (The initial 
+  bytes for A and B file types indicate file length.)
+* Updated FileFilter to suggest an appropriate file name.
+* Extracting black & white or color (user selected) HGR file format to 
+  PNG/JPEG (user selected).  GIF is not a part of ImageIO for writing 
+  (apparantly is avilable for reading).
+* Fixed issue in determining DOS format disks.  Originally was only 
+  checking 3 bytes of the VTOC for valid values.  Extended to check for 8 
+  valid values in the VTOC.  Fixed known problem with Crisis Mountain.
+* Allow graphic extraction to happen with JDK 1.3 (currently limited to 
+  JDK 1.4).  If not possible, disable graphics filter.  Change export 
+  options appropriately.
+* Extract Apple double hi-res image formats (B&W, color) and convert to 
+  PNG/JPEG.  Technical specs are available at - 
+  	http://web.pdx.edu/~heiss/technotes/aiie/tn.aiie.03.html
+* Double hi-res images are extracted at 560x384 pixels to maintain 
+  appropriate aspect ratio.
+* Changed method of loading images. This fixed the Windows 98 startup issue.
+* When opening a disk image on Linux, the tab is now selected.  This is 
+  done implicitly under Windows.  When running under Linux (motif to 
+  be precise), there is no default tab and it must be explicitly selected.
+* Export wizard. Allows filter to be chosen along with any filter settings 
+  (just graphics right now) and export directory.  Settings are remembered 
+  between exports.
+
+1.0.1g (2002-10-31)
+* AppleCommander would not start under Windows 98.  Looking at where 
+  the crash happened, it was the only PNG image in the system.  Converted 
+  this PNG image to GIF format and will re-release.  No other code changes.  
+  Does not resolve Windows 98 issue.
+
+Website (2002-10-28)
+* Make website and announce on comp.sys.apple2.
+
+1.0.1 (2002-10-27)
+* Fixed a number of JDK 1.3 issues - code where JDK 1.4 is fine, but 
+  the method is not available in JDK 1.3.  These were:
+  - NumberFormat.getIntegerInstance() ==> NumberFormat.getNumberInstance().
+  - BitMap set(int, boolean) ==> set(int) if true and clear(int) if false.
+* Sort bug - if sorting a string that is null or zero length, a 
+  NumberFormatException could occur.
+
+1.0 (2002-10-27)
+* Change to JDK 1.3 for compile. Needed to change entire workspace.
+* Show/hide deleted files. Should be available only on disks which can hold 
+  deleted files.
+* Support .zip or .gz compression.  Added support for GZIP.  Unable to find 
+  an example of a ZIP compressed archive.  Deprecated DiskHelper class - 
+  seemed to make sense to merge into the Disk interface itself.
+* Modify Disk interface to give a list of file types - in a generic manner - 
+  which would be used by the GUI instead of trying to keep GUI in synch with 
+  the Disk interface.  Added FileFilter to Disk and added getFileFilters 
+  class method.
+* Double-click on directory should expand that item.
+* Fixed ProDOS filename recognition in the case of a deleted file.
+* Right-click menu for directories - expand/collapse; expand all/collapse all.
+* Add sorting to file table.
+
+0.92 (2002-10-24)
+* Fix icon transparency. Needed to change from PNG to GIF; apparantly SWT 
+  does not do PNG transparency.
+* Don't use large font in disk usage map; on some displays, the words are 
+  cut off and the legend doesn't fit in the window.
+* Remove getDirectoryString from FileEntry interface and replace with 
+  getFileColumnData.
+* In ProDOS view, if address is $0000, it should not be displayed.
+* Remember column sizing in file view.
+* Improved initial width guess for columns in file view.
+* Do not always redraw table - do it intelligently.  Checking both the list 
+  of files and the format before deciding upon an action.
+* Need icons for delete file and save image.
+
+0.91 (2002-10-21)
+* Implement changing views (standard, native, detail).
+
+0.90 (2002-10-17)
+* Initial release - basic reading of disks.
+

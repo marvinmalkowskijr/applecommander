@@ -1,0 +1,318 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>AppleCommander</title>
+    <style type="text/css">
+        body { font: 10pt verdana; }
+        table { font: 10pt verdana; }
+        th { background-color: eeeeee; border: solid black 1px; }
+    </style>
+</head>
+
+<body bgcolor='white'>
+
+<center>
+<img src='images/AppleCommanderLogo.gif' alt='AppleCommander'>
+<br>
+<a href='#about'>About</a>
+|
+<a href='#capabilities'>Capabilities</a>
+|
+<a href='screenshots.html'>Screen Shots</a>
+|
+<a href='#issues'>Issues</a>
+|
+<a href='#future'>Future</a>
+|
+<a href='#requirements'>Requirements</a>
+|
+<a href='http://sourceforge.net/projects/applecommander/'>SourceForge</a>
+|
+<a href='#download'>Download</a>
+|
+<a href='#developer'>Developer Documentation</a>
+|
+<a href='acguide.html'>Command-line Guide</a>
+|
+<a href='#history'>Historical</a>
+|
+<a href='#contact'>Contact</a>
+</center>
+
+<table>
+<tr align="left">
+<td><a href="http://sourceforge.net"><img src="http://sourceforge.net/sflogo.php?group_id=67414&amp;type=1" width="88" height="31" border="0" alt="SourceForge.net Logo"></a></td>
+<td>Welcome to the AppleCommander web site! Click on a link to jump to the
+appropriate section, or continue on and read it all! AppleCommander is
+hosted at SourceForge.</td>
+</tr>
+</table>
+
+
+<h2><a name='about'>About</a></h2>
+<p>
+AppleCommander is a little project whose main purpose is to provide a
+tool to move data between Apple ][ disk images and a native filesystem
+('C:\' for Windows, or '/wherever' for Linux and Mac OS X).  As with all
+good projects, this one is a little out of hand, and it is becoming a
+general utility to manipulate Apple ][ emulator images.  If you're
+thinking this could be useful, read on!
+</p>
+<p>
+Some secondary (or tertiary, depending on what you are counting)
+considerations are to give me a bit of experience using <a
+href="http://www.eclipse.org" target="_blank">Eclipse.org</a>'s <a
+href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/platform-swt-home/main.html" target="_blank">SWT</a> (Standard Widget Toolkit) -
+which is an alternative windowing system to Sun's AWT or Swing.
+</p>
+<p>
+If you wish to participate or have ideas, please let us know!
+</p>
+<p>
+<a href='http://sourceforge.net/projects/applecommander/'>Please click here to visit the AppleCommander project page</a>.<br>
+<a href='http://sourceforge.net/projects/applecommander/files/AppleCommander%20-%20Stable/'>Please click here to download the latest stable release</a>.<br>
+<a href='http://sourceforge.net/projects/applecommander/files/AppleCommander%20-%20Interim/'>Please click here to download the current release candidate</a>.
+</p>
+
+<h2><a name='capabilities'>Capabilities</a></h2>
+<p>
+As stated above, AppleCommander is intended to become a general utility
+for disk images.  But, where is it now? What are the current capabilities?
+</p>
+<p>
+AppleCommander is currently able to read and display information about
+disk images, export files of various types, create disk images, import
+files into disk images, and has a rudimentary compiler.  As of
+<b>1.3.5</b>, AppleCommander incorporates support for <a
+href="http://www.cc65.org/">cc65</a> and an improved<a
+href='acguide.html'> command-line</a> and even an <a href="acant.html">ant</a> interface.
+</p>
+Disk image organizations currently supported:
+<ul>
+<li>Compressed images (*.gz);</li>
+<li>140K DOS-ordered images (*.do, *.dsk);</li>
+<li>140K ProDOS-ordered images (*.po);</li>
+<li>140K Nibble (DOS ordered) images (*.nib);</li>
+<li>800K ProDOS-ordered images (*.2mg, *.2img);</li>
+<li>32MB ApplePC Hard Disk images (*.hdv).</li>
+</ul>
+Disk formats currently supported (ie, operating systems):
+<ul>
+<li>DOS 3.3 (140K formats only);</li>
+<li>UniDOS, OzDOS (800K formats only);</li>
+<li>ProDOS;</li>
+<li>Apple Pascal (140K and 800K formats);</li>
+<li>SSI's RDOS (140K formats only);</li>
+<li>CP/M (probably only 140K formats).</li>
+</ul>
+File export filters:
+<ul>
+<li>Raw disk data (dumps blocks or sectors without regard to file length or operating system storage);</li>
+<li>Binary file (dumps file without any conversion);</li>
+<li>Hex dump;</li>
+<li>ASCII file filter;</li>
+<li>Formatted assembly output;</li>
+<li>Pascal ".text" files;</li>
+<li>Applesoft BASIC file filter (file is de-tokenized and written out as a text file);</li>
+<li>Integer BASIC file filter (ditto);</li>
+<li>Graphic image file filter (supports black and white or color Hires images as well as black and white or color Double Hires images as well as standard Super Hires, and 3200 color Super Hires);</li>
+<li>AppleWorks word processor (AWP) file filter (converts to text, poor HTML, or Rich-Text Format (RTF));</li>
+<li>AppleWorks database (ADB) file filter (converts to CSV);</li>
+<li>AppleWorks spread sheet (ASP) file filter (converts to CSV).</li>
+</ul>
+Compile capabilities (BETA):
+<ul>
+<li>Applesoft BASIC</li>
+</ul>
+Viewer capabilities:
+<ul>
+<li>BASIC programs (Applesoft and Integer BASIC); Applesoft BASIC is colored</li>
+<li>Graphics images (same as supported by the graphics export function)</li>
+<li>Appleworks (database, spreadsheet, word processor)</li>
+<li>Text files (plain text, assembly source files, Pascal text files)</li>
+<li>Hex dump of all the above</li>
+<li>"Raw" format of all of the above; this includes all data as read from disk
+    including length and starting address as well as full sectors/blocks</li>
+</ul>
+
+<h2><a name='issues'>Issues</a></h2>
+Known issues with AppleCommander:
+<ul>
+<li>If a disk is mostly in a known format, but has bad data and what-not, AppleCommander may crash.  Technically, the worst culprit is a retrieving a non-existant block or track/sector.</li>
+<li>Various interface improvements.</li>
+<li>Requirement of a Java JVM as well as SWT for the interface.</li>
+<li>The Win32 (compiled) version of AppleCommander doesn't interpret graphic image colors correctly - however the Java JAR version does.</li>
+</ul>
+<p>
+Please visit the <a href='http://sourceforge.net/tracker/?group_id=67414'>tracker</a> page
+for an up-to-date list of issues, submit a new issue, or submit a feature request.
+</p>
+
+<h2><a name='future'>Future</a></h2>
+<p>
+There is a general list of TODO items which is managed as part of the
+CVS archive. Click <a
+href='http://applecommander.cvs.sourceforge.net/applecommander/AppleCommander/TODO?view=log'>
+here</a> to see the current TODO list.
+</p>
+
+<p>
+Does the future include you?  Anyone is welcome to suggest or contribute!
+</p>
+
+<h2><a name='requirements'>Requirements</a></h2>
+<p>
+AppleCommander is written in Java and uses a non-standard Java library,
+SWT.  Fortunately, none of these will cost anything but download time:
+</p>
+<ul>
+<li><b>Java</b> - If you need to install Java, go to the <a
+href="http://java.sun.com/j2se/downloads.html">Sun Java</a> site for
+J2SE and download the latest version (1.4.2 as of June 2004) and install
+it.  I develop with 1.4.2_04, and have tested with 1.3.1, so these
+should work along with any future releases. </li>
+<li><b>SWT</b> - As far as SWT is concerned, I have created a Windows
+archive (1MB) of these files which you can unzip into the same directory
+as the AppleCommander JAR file.  The Mac bundle includes the SWT files.
+For the latest release of SWT, <a href='http://www.eclipse.org/downloads/'>
+visit the Eclipse site</a>!</li>
+</ul>
+<p>
+Because of the SWT difficulties, I hope to continue <a href="http://www-106.ibm.com/developerworks/java/library/j-nativegui/"
+target="_blank">compiling</a> the application.  These will be tagged with a win32 in
+the filename.
+</p>
+
+<h2><a name='download'>Download</a></h2>
+<p>
+<b>Note: Please read the requirements and download Java and the SWT code, if required first!</b>
+</p>
+<p>
+Once you have installed Java and copied SWT into the future AppleCommander directory, download  a copy of AppleCommander
+from the <a href='http://sourceforge.net/project/showfiles.php?group_id=67414'>download
+section of the SourceForge site</a>.
+</p>
+<p>
+This software is distributed under the 
+<a href='http://www.opensource.org/licenses/gpl-license.php'>GPL</a>.
+</p>
+<p>
+To start AppleCommander, just double-click on the AppleCommander JAR file!
+If you've downloaded the win32 version, double-click on the EXE file.
+One Mac, double-click AppleCommander.app; recent libraries are included.
+</p>
+
+<h2><a name='developer'>Developer Documentation</a></h2>
+<p>
+There is currently minimal documentation available for others interested in the development,
+structure, or code of AppleCommander.  The source is, of course, available on
+<a href='http://sourceforge.net/projects/applecommander/'>SourceForge</a> via
+<a href='http://sourceforge.net/cvs/?group_id=67414'>CVS</a>.  However,
+extra documentation is fairly sparse at this time.
+</p>
+<p>
+For your web-browsing pleasure, the <a href='javadoc/'>AppleCommander Java Documentation</a>
+has been uploaded, and I will try to keep it up-to-date.  (If not, the code is documented,
+and you can generate it yourself.)
+</p>
+<p>
+Additionally, <a href='http://www.eclipseuml.com'>EclipseUML</a> has been used to generate the UML
+diagrams which have been drawn by hand.  <a href='uml/index.html'>These UML diagrams</a> don't cover all
+of AppleCommander, but they do give the general structure used by the "storage" package - that is,
+the domain in which AppleCommander specializes.
+</p>
+
+<h2><a name='history'>Historical</a></h2>
+<table width='100%' cellpadding='2'>
+<tr>
+    <th align='right'>Version</th>
+    <th align='right'>Date</th>
+    <th align='left'>Description</th>
+</tr>
+<tr>
+  <td align='right' valign='top'>1.3.5</td>
+  <td align='right' valign='top' nowrap>01-Jun-2008</td>
+  <td>Added support for cc65 and improved support for Apple
+UCSD Pascal 800K images and Mac OS X. The summary is available <a href='news-20080601.html'>here</a>.</td>
+</tr>
+<tr>
+  <td align='right' valign='top'>1.3.4</td>
+  <td align='right' valign='top' nowrap>31-Mar-2007</td>
+  <td>Resolved OS X issues (JMatthews); Pascal 800K format now supported (JMatthews); Pascal images are now writeable (JMatthews). The summary is available <a href='news-20070331.html'>here</a>.</td>
+</tr>
+<tr>
+  <td align='right' valign='top'>1.3.3</td>
+  <td align='right' valign='top' nowrap>18-Jun-2004</td>
+  <td>Primarily restructuring, but added a two new file viewers (Apple Pascal .text files and Assembly source code).  The summary is available <a href='news-20040618.html'>here</a>.</td>
+</tr>
+<tr>
+  <td align='right' valign='top'>1.3.2</td>
+  <td align='right' valign='top' nowrap>05-Jun-2004</td>
+  <td>Added nibble image support, CP/M support, as well as SHR 3200-color graphics. The summary is available <a href='news-20040605.html'>here</a>.</td>
+</tr>
+<tr>
+  <td align='right' valign='top'>1.3.1</td>
+  <td align='right' valign='top' nowrap>12-Dec-2003</td>
+  <td>Incorporated John Matthews' command-line version of AppleCommander ("ac"); added file viewing capabilities. The posting is <a href='news-posting-20031212.html'>here</a>.</td>
+</tr>
+<tr>
+  <td align='right' valign='top'>1.3.0</td>
+  <td align='right' valign='top' nowrap>04-Dec-2003</td>
+  <td>Very early release of an Applesoft BASIC compiler; John Matthews' bug fixes have been incorporated; Chris Sebrell's fixes have been incorporated.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.2.3</td>
+    <td align='right' valign='top' nowrap>13-Apr-2003</td>
+    <td>Work towards Windows executable (now available!); posting is <a href='news-posting-20030413.html'>here</a>.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.2.2</td>
+    <td align='right' valign='top' nowrap>15-Mar-2003</td>
+    <td>Bug fixes (primarily ProDOS updates); posting is<a href='news-posting-20030315.html'>here</a>.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.2.1</td>
+    <td align='right' valign='top' nowrap>1-Mar-2003</td>
+    <td>Bug fixes; added ASP and ADB exports; posting is <a href='news-posting-20030301.html'>here</a>.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.2.0</td>
+    <td align='right' valign='top' nowrap>11-Feb-2003</td>
+    <td>The fourth posting for version 1.2.0 announcing import abilities is <a href='news-posting-20030211.html'>here</a>.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.1.1</td>
+    <td align='right' valign='top' nowrap>30-Nov-2002</td>
+    <td>The third posting for version 1.1.1 announcing the GPL release of AppleCommander is <a href='news-posting-20021130.html'>here</a>.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.1</td>
+    <td align='right' valign='top' nowrap>12-Nov-2002</td>
+    <td>The second posting for version 1.1 is located <a href='news-posting-20021112.html'>here</a>.</td>
+</tr>
+<tr>
+    <td align='right' valign='top'>1.0</td>
+    <td align='right' valign='top' nowrap>28-Oct-2002</td>
+    <td>The first news group posting is <a href='news-posting-20021028.html'>here</a> announcing version 1.0.</td>
+</tr>
+</table>
+
+<h2><a name='contact'>Contact</a></h2>
+<p>
+Feel free to drop some email - I don't expect traffic to be very large.
+However, because of the ever-present threat of SPAM, I won't create an
+email link either (sorry, you gotta type it!):
+</p>
+<p>
+RobGreene at users dot sourceforge dot net<br>
+matthewsj at users dot sourceforge dot net
+</p>
+
+<p align="right">
+Last updated 30-Jul-2012
+</p>
+
+</body>
+</html>

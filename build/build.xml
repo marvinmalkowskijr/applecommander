@@ -1,0 +1,238 @@
+<project name="AppleCommander" default="all" basedir="..">
+	<description>
+		This script builds the distribution components.
+	</description>
+	
+	<property name="work" value="work"/>
+	<property name="classes" value="${work}/classes"/>
+	<property name="dist" value="${work}/dist"/>
+	<property name="source" value="src"/>
+	<property name="testsrc" value="test"/>
+	<property name="build" value="build"/>
+	<property name="doc" value="documentation"/>
+	<property name="web" value="web"/>
+	<property name="javadoc" value="${work}/javadoc"/>
+	<property name="builddir" value="${basedir}/build" />
+	<property file="${builddir}/ACBuild.properties"/>
+	<property file="${builddir}/ACBuild-default.properties"/>
+	<condition property="swtjar"
+		value="${swtJarPathWin}"
+		else="${swtJarPathMac}">
+		<os family="windows"/>
+	</condition>	
+	<condition property="junitjar"
+		value="${junitPathWin}"
+		else="${junitPathMac}">
+		<os family="windows"/>
+	</condition>	
+	<condition property="antjar"
+		value="${antPathWin}"
+		else="${antPathMac}">
+		<os family="windows"/>
+	</condition>	
+
+
+	<condition property="signing-needed">
+		<available file="${keyconf}" property="keyconf-exists" />
+	</condition>
+
+	<taskdef name="bundleapp"
+             classname="com.oracle.appbundler.AppBundlerTask"   
+             classpath="lib/appbundler-1.0.0.jar" />
+
+
+	<target name="version" description="Get version from source.">
+		<property name="main.path" value="src/com/webcodepro/applecommander/ui"/>
+		<loadfile srcfile="${main.path}/AppleCommander.java" property="acVersion">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern='^.*String VERSION = ".*";.*$'/>
+				</linecontainsregexp>
+				<tokenfilter>
+					<replaceregex pattern='^.*String VERSION = "(.*)";.*$' replace='\1'/>
+				</tokenfilter>
+				<striplinebreaks/>
+			</filterchain>
+		</loadfile>
+		<echo>Building version ${acVersion}...</echo>
+	</target>
+
+	<target name="init" depends="version" description="Ensure work directory is present">
+		<mkdir dir="${work}"/>
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${dist}"/>
+		<mkdir dir="${javadoc}"/>
+		<property name="guijar" value="${dist}/AppleCommander-${acVersion}.jar"/>
+		<property name="cmdjar" value="${dist}/AppleCommander-${acVersion}-ac.jar"/>
+		<property name="maczip" value="${dist}/AppleCommander-${acVersion}-mac.zip"/>
+		<property name="srczip" value="${dist}/AppleCommander-${acVersion}-src.zip"/>
+		<property name="webzip" value="${dist}/AppleCommander-${acVersion}-web.zip"/>
+	</target>
+	
+	<target name="clean" depends="init" description="Wipes out work contents">
+		<delete dir="${classes}"/>
+		<delete dir="${dist}"/>
+		<delete dir="${javadoc}"/>
+	</target>
+	
+	<target name="all" depends="init,jars,macBundle,sourceZip,javadoc,websiteZip" description="Everything">
+	    <!-- Nothing else to do - depends handles it all. -->
+	</target>
+	
+	<target name="jars" depends="init,executableGuiJar,executableCmdJar,signJars" description="Build executable jars">
+	    <!-- Nothing else to do - depends handles it all. -->
+	</target>
+	
+	<target name="signJars" depends="init" if="signing-needed" description="Signs the jars">
+		<!-- In ACBuild.properties => keyconf=${user.home}/.secret alias=name -->
+		<!-- See man keytool, http://java.sun.com/j2se/1.5.0/docs/tooldocs/ -->
+		<loadfile srcfile="${keyconf}" property="password"/>
+		<signjar alias="${alias}" storepass="${password}">
+			<fileset dir="${basedir}">
+				<include name="${cmdjar}"/>
+				<include name="${guijar}"/>
+			</fileset>
+		</signjar>
+	</target>
+	
+	<target name="executableGuiJar" depends="init" description="Build GUI executable JAR">
+		<javac srcdir="${source}" destdir="${classes}"  classpath="${swtjar}">
+			<include name="**/*.java"/>
+			<exclude name="**/*Test.java"/>
+		</javac>
+		<jar jarfile="${guijar}" manifest="build/manifest.mf">
+			<fileset dir="${classes}"/>
+			<fileset dir="${source}">
+				<include name="**/*.dump"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.gif"/>
+			</fileset>
+			<fileset dir=".">
+			    <include name="LICENSE"/>
+			    <include name="TODO"/>
+			    <include name="VERSIONS"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="executableCmdJar" depends="init" description="Build command-line only executable JAR">
+		<javac srcdir="${source}" destdir="${classes}" target="1.3" source="1.3">
+			<include name="**/*.java"/>
+			<exclude name="**/*Test.java"/>
+		</javac>
+		<jar jarfile="${cmdjar}" manifest="build/ac.mf">
+			<fileset dir="${classes}">
+				<exclude name="com/webcodepro/applecommander/ui/swt/**"/>
+				<exclude name="com/webcodepro/applecommander/ui/images/**"/>
+			</fileset>
+			<fileset dir="${source}">
+				<include name="**/*.dump"/>
+				<include name="**/*.properties"/>
+			</fileset>
+			<fileset dir=".">
+			    <include name="LICENSE"/>
+			    <include name="TODO"/>
+			    <include name="VERSIONS"/>
+			</fileset>
+		</jar>
+	</target>
+
+	<target name="macBundle" depends="init,jars">
+		<property name="mac.dir" value="mac"/>
+		<property name="mac.app" value="${mac.dir}/AppleCommander.app"/>
+		<property name="mac.Contents" value="${mac.app}/Contents"/>
+		<property name="mac.Java" value="${mac.Contents}/Resources/Java"/>
+		<bundleapp outputdirectory="${dist}"
+		    name="AppleCommander"
+		    displayname="AppleCommander"
+		    identifier="com.webcodepro.applecommander.ui.AppleCommander"
+		    mainclassname="com.webcodepro.applecommander.ui.AppleCommander">
+		    <classpath file="${mac.Java}/AppleCommander.jar"/>
+		</bundleapp>
+                <copy file="${guijar}" tofile="${mac.Java}/AppleCommander.jar"/>
+		<copy file="${swtJarPathMac}" todir="${mac.Java}"/>
+	    </target>
+	
+	<!-- target name="macBundle" depends="init,jars" description="Build Mac application bundle.">
+		<property name="mac.dir" value="mac"/>
+		<property name="mac.app" value="${mac.dir}/AppleCommander.app"/>
+		<property name="mac.Contents" value="${mac.app}/Contents"/>
+		<property name="mac.Java" value="${mac.Contents}/Resources/Java"/>
+		<copy file="${mac.dir}/Info.plist" todir="${mac.Contents}" overwrite="true">
+			<filterset>
+				<filter token="version" value="${acVersion}"/>
+			</filterset>
+		</copy>
+		<copy  todir="${mac.Contents}" overwrite="true">
+			    <fileset dir="${mac.dir}/Contents/MacOS"/>
+			    <fileset dir="${mac.dir}/Contents/Resources"/>
+		</copy>
+		 <copy file="${mac.dir}/Contents/PkgInfo" tofile="${mac.app}/Contents"/>
+
+                <copy file="${guijar}" tofile="${mac.Java}/AppleCommander.jar"/>
+	    <zip destfile="${maczip}">
+	        <zipfileset dir="${mac.app}" prefix="AppleCommander.app"/>
+			<zipfileset dir="${mac.app}" prefix="AppleCommander.app"
+				includes="Contents/MacOS/JavaApplicationStub" filemode="755"/>
+	    </zip>
+	</target -->
+
+	<target name="sourceZip" depends="init" description="Build source ZIP archive">
+	    <zip zipfile="${srczip}">
+	    	<zipfileset dir=".">
+	    		<include name="ECLIPSE-CONFIG"/>
+	    		<include name="HEADER"/>
+	    		<include name="LICENSE"/>
+	    		<include name="NATIVE-COMPILE"/>
+	    		<include name="TODO"/>
+	    		<include name="VERSIONS"/>
+	    	</zipfileset>
+	        <zipfileset dir="${source}" prefix="${source}">
+				<include name="**/*.java"/>
+				<include name="**/*.dump"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.gif"/>
+	        </zipfileset>
+	        <zipfileset dir="${testsrc}" prefix="${testsrc}">
+				<include name="**/*.java"/>
+				<include name="**/*.dump"/>
+				<include name="**/*.properties"/>
+				<include name="**/*.gif"/>
+	        </zipfileset>
+	        <zipfileset dir="${build}" prefix="${build}"/>
+	        <zipfileset dir="${doc}" prefix="${doc}">
+	        	<include name="**/*.txt"/>
+	        </zipfileset>
+	        <zipfileset dir="${web}" prefix="${web}">
+	        	<include name="**/*.html"/>
+	        	<include name="**/*.gif"/>
+	        	<include name="**/*.png"/>
+	        </zipfileset>
+	    </zip>
+	</target>
+	
+	<target name="javadoc" depends="init" description="Build javadoc">
+		<javadoc destdir="${javadoc}" author="true" windowtitle="AppleCommander ${acVersion} JavaDoc"
+				classpath="${swtjar};${junitjar};${antjar}">
+			<fileset dir="${source}">
+				<exclude name="**/*gif"/>
+				<exclude name="**/*dump"/>
+				<exclude name="**/*properties"/>
+			</fileset>
+			<fileset dir="${testsrc}">
+				<exclude name="**/*properties"/>
+			</fileset>
+		</javadoc>
+    </target>
+	
+	<target name="websiteZip" depends="javadoc" description="Build website ZIP archive">
+	    <zip zipfile="${webzip}">
+	        <zipfileset dir="${web}">
+	        	<include name="**/*.html"/>
+	        	<include name="**/*.gif"/>
+	        	<include name="**/*.png"/>
+	        </zipfileset>
+	        <zipfileset dir="${javadoc}" prefix="javadoc"/>
+	    </zip>
+	</target>
+</project>

@@ -1,0 +1,199 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>AppleCommander Command-line Guide</title>
+    <style type="text/css">
+        body { font-family: serif }
+    </style>
+</head>
+
+<body bgcolor='white'>
+
+<p>
+<a href="index.html">AppleCommander Home Page</a>
+</p>
+<p>
+<b>Installing ac</b>
+</p>
+<p>
+The distribution file <tt>AppleCommander-<i>version</i>-ac.jar</tt> provides a command-line interface to AppleCommander. It is ready to use immediately, but it may be convenient to rename it (e.g. <tt>ac.jar</tt>) or invoke it from a script, e.g.</p>
+<small>GNU</small> bash script (<tt>ac.sh</tt>):
+<pre>    #!/bin/sh
+    java -jar ~/bin/ac.jar "${@}"
+</pre>
+<small>MS DOS</small> batch file (<tt>ac.bat</tt>):
+<pre>    @echo off 
+    java -jar AppleCommander-1.3.5-ac.jar %*
+</pre>
+<p>
+<b>Using ac</b>
+</p>
+<p>
+For a quick list of ac options, enter the <b><b><tt>-h</tt></b></b> command:
+</p>
+<pre>    java -jar ac.jar -h
+
+    CommandLineHelp = AppleCommander command line options [{0}]:
+    -i  &lt;imagename&gt; [&lt;imagename&gt;] display information about image(s).
+    -ls &lt;imagename&gt; [&lt;imagename&gt;] list brief directory of image(s).
+    -l  &lt;imagename&gt; [&lt;imagename&gt;] list directory of image(s).
+    -ll &lt;imagename&gt; [&lt;imagename&gt;] list detailed directory of image(s).
+    -e  &lt;imagename&gt; &lt;filename&gt; export file from image to stdout.
+    -x  &lt;imagename&gt; [&lt;directory&gt;] extract all files from image to directory.
+    -g  &lt;imagename&gt; &lt;filename&gt; get raw file from image to stdout.
+    -p  &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; [[$|0x]&lt;addr&gt;] put stdin
+        in filename on image, using file type and address [0x2000].
+    -d  &lt;imagename&gt; &lt;filename&gt; delete file from image.
+    -k  &lt;imagename&gt; &lt;filename&gt; lock file on image.
+    -u  &lt;imagename&gt; &lt;filename&gt; unlock file on image.
+    -n  &lt;imagename&gt; &lt;volname&gt; change volume name (ProDOS or Pascal).
+    -cc65 &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; put stdin with cc65 header
+          in filename on image, using file type and address from header.
+    -geos &lt;imagename&gt; interpret stdin as a ProDOS GEOS transfer file and place on image.
+    -dos140 &lt;imagename&gt; create a 140K DOS 3.3 image.
+    -pro140 &lt;imagename&gt; &lt;volname&gt; create a 140K ProDOS image.
+    -pro800 &lt;imagename&gt; &lt;volname&gt; create an 800K ProDOS image.
+    -pas140 &lt;imagename&gt; &lt;volname&gt; create a 140K Pascal image.
+    -pas800 &lt;imagename&gt; &lt;volname&gt; create an 800K Pascal image.
+    -unshrink &lt;shrinksdk&gt; &lt;imagename&gt; uncompress a ShrinkIt disk image
+              into a normal disk image. 
+</pre>
+<p>
+Examples of some typical command options follow:
+</p>
+<p>
+The <b><tt>-dos140</tt></b> command creates an empty 140K DOS 3.3 disk image in DOS sector order; DOS volumes do not have names, and volume number is the default (254). The <b><tt>-pro140</tt></b> command creates an empty 140K ProDOS disk image, and <b><tt>-pro800</tt></b> creates an empty 800K image, both in ProDOS sector order. The <b><tt>-pas140</tt></b> command creates an empty 140K Pascal disk image, and <b><tt>-pas800</tt></b> creates an empty 800K image, both in Pascal sector order. To be read correctly, DOS order disk image names should end in <tt>.dsk</tt> or <tt>.do</tt>, while ProDOS and Pascal order image names should end in <tt>.po</tt>. The resulting images will not boot, but they can be edited with the traditional utilities. To create a DOS 3.3, Pascal and ProDos image, enter the commands:
+</p>
+<pre>
+    java -jar ac.jar -dos140 dos.dsk
+    java -jar ac.jar -pas140 pas.po volume1
+    java -jar ac.jar -pro140 pro.po volume2
+</pre>
+<p>
+The <b><tt>-i</tt></b> command displays information about a disk image. Multiple image names are permitted. To get information about one or more disks, enter any of the following commands:
+</p>
+<pre>
+    java -jar ac.jar -i ricky.2mg
+    java -jar ac.jar -i fred.dsk ethel.po
+    java -jar ac.jar -i mertz/*
+    java -jar ac.jar -i *.po *.dsk
+</pre>
+<p>
+The <b><tt>-ls</tt></b>, <b><tt>-l</tt></b> and <b><tt>-ll</tt></b> commands list the  directory of a disk image in short, regular and long format respectively. Muitiple image names are permitted, as suggested above. To see the directory of one or more disk, enter any of the following commands:
+</p>
+<pre>
+    java -jar ac.jar -ls misc.dsk
+    java -jar ac.jar -l  misc.dsk
+    java -jar ac.jar -ll misc.dsk
+    java -jar ac.jar -ls *.po *.dsk
+    java -jar ac.jar -l  Nibble*/*
+</pre>
+<p>
+The <b><tt>-e</tt></b> command lets you examine a file by printing a readable version to standard output. To examine a file named fred on a disk named misc.dsk, enter the command:
+</p>
+<pre>
+    java -jar ac.jar -e misc.dsk fred
+</pre>
+<p>
+The export command tries to choose an approriate filter for the chosen file. Filters exist for formats, with a default hexadecimal foramt for binary files. If the file is probably a picture, the export format is PNG. To save the output to a file:
+</p>
+<pre>
+    java -jar ac.jar -e misc.dsk lucy.pic &gt; lucy.png
+</pre>
+<p>
+The <b><tt>-g</tt></b> command gets a file in its raw form. To copy a file named fred from misc.dsk to a file named ethel on your file system, enter the command:
+</p>
+<pre>
+    java -jar ac.jar -g misc.dsk fred &gt; ethel
+</pre>
+<p>
+Because binary files are difficult to read, you may want to send the output to a program that can show the data in a hexadecimal format other than the one used with the -e option, above:
+</p>
+<pre>
+    java -jar ac.jar -g misc.dsk fred | hexdump
+</pre>
+<p>
+The <b><tt>-p</tt></b> command puts data from the standard input stream onto a disk image. Four parameters are used: imagename, filename, type, and address. If the address is omitted and one is required, $2000 is assumed. Suppose ethel is a binary file meant to start at address 2048 ($800 or 0x800). To put the binary file named ethel back into a file named fred with that starting address on the DOS image named misc.dsk:
+</p>
+<pre>
+    java -jar ac.jar -p misc.dsk fred B 0x800 &lt; ethel
+</pre>
+<p>
+</p>
+
+<p>
+Alternatively, suppose ethel is a binary starting at 2048 destined for fred on a ProDOS image named p1.po:
+</p>
+<pre>
+    java -jar ac.jar -p p1.po fred bin 2048 &lt; ethel
+</pre>
+
+The <b><tt>-cc65</tt></b> command is like -p, but it assumes the input stream includes a four-byte header, as generated by cc65. Three parameters are required: imagename, filename, and type. The start address is taken from bytes 0-1 of the header. To put the cc65 binary named ethel into a file named fred on the DOS image named misc.dsk:
+
+<pre>
+    java -jar ac.jar -cc65 misc.dsk fred B &lt; ethel
+</pre>
+<p>
+As another example, consider the text file named foo.text and the Pascal image named src.po:
+</p>
+<pre>
+    java -jar ac.jar -p p2.po foo.text text &lt; foo.text
+</pre>
+<p>
+Valid file types are specific to each operating system:
+</p>
+<ul>
+<li><tt><i>DOS 3.x</i>: A, B, I, T, S, R, a, b</tt>.</li>
+<li><tt><i>Pascal</i>: bad, code, text, info, data, graf, foto</tt>.</li>
+<li><tt><i>ProDOS</i>: bas, bin, sys, txt, rel, etc.; see ProdosFileTypes.properties for more</tt>.</li>
+</ul>
+<p>
+The <b><tt>-d</tt></b> command deletes a file from an image:
+</p>
+<pre>
+    java -jar ac.jar -d misc.dsk fred
+</pre>
+<p>
+To copy a file from one image to another, do something like this:
+</p>
+<pre>
+    java -jar ac.jar -g one.dsk fred | java -jar ac.jar -p another.dsk fred bin 2048
+</pre>
+<p>
+The <b><tt>-k</tt></b> and <b><tt>-u</tt></b> commands lock and unlock a file on the given image:
+</p>
+<pre>
+    java -jar ac.jar -k misc.dsk fred
+    java -jar ac.jar -u misc.dsk fred
+</pre>
+<p>
+The <b><tt>-n</tt></b> command changes the volume name on an image. Only ProDOS and Pascal images are affected:
+</p>
+<pre>
+    java -jar ac.jar -n misc.po name
+</pre>
+<p>
+Here's a more comprehensive example of using AppleCommander for <a href="http://home.roadrunner.com/~jbmatthews/a2/cross.html" rel="nofollow">cross-platform</a> development.
+</p>
+It's also possible to invoke the command line functions from within the ant build environment by using AppleCommander's ant interface,
+documented <a href="acant.html">here</a>.
+<p>
+The <b><tt>-geos</tt></b> transfer file format is specified in <a href="http://wiki.cc65.org/doku.php?id=cc65:apple2:geosconvertformat" rel="nofollow"><i>Apple GEOS CONVERT Format</i></a>.
+</p>
+<p>
+<b>Known problems &amp; limitations</b>
+</p>
+<p>
+To replace an existing file on an image, you must delete it first; ac will create as many duplicate entries as you specify, only one of which will be accessible to the operating system.
+</p>
+<p>
+Given a ProDOS image, a full pathname may be specified for the -e, -g, -p, -d, -k, -u and -cc65 options. Files can only be put into an existing directory.
+</p>
+<p>
+<a href="index.html">AppleCommander Home Page</a>
+</p>
+
+</body>
+</html>

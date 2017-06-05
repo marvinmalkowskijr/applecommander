@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+<title>AppleCommander Command-line Guide - Ant</title>
+    <style type="text/css">
+        body { font-family: serif }
+    </style>
+</head>
+
+<body bgcolor='white'>
+
+<p>
+<a href="index.html">AppleCommander Home Page</a>
+</p>
+<p>
+The distribution file <tt>AppleCommander-<i>version</i>-ac.jar</tt> provides an
+Ant task that can be used as part of Ant-based builds.
+<p>
+<b>Using the Apple Commander Ant task</b>
+</p>
+<p>
+The AppleCommander ant task mirrors the ac command line as much as possible.
+The advantage over using the ant task over simply calling the AppleCommander command line directly is speed.
+It is much faster to call on the ant task than it is for ant to shell out to the system, fire up a Java instance, and then execute your command.
+</p>
+As with any external ant task, the first thing that must be done is to declare a <tt>taskdef</tt>:
+<pre>
+   &lt;taskdef name="appleCommander" 
+       classname="com.webcodepro.applecommander.ui.AntTask" 
+       classpath="AppleCommander-${version}-ac.jar"/&gt;
+</pre>
+Where <tt>${version}</tt> would need to be defined by you to be the version of the command-line AppleCommander you are using.
+The first version of the AC command line that included this ant task support is 1.3.5.13.
+<p>
+Once you have the <tt>taskdef</tt> defined, it can be called from within ant like this:
+<pre>
+   &lt;!-- Call AppleCommander to print information about the disk image --&gt;
+   &lt;appleCommander command="i" imagename="${myDiskImage}" /&gt;
+</pre>
+The commands that the ant task understands generally mirror those of the command line.
+Here's a list of them, along with their required and optional parameters:
+<pre>
+   i  &lt;imagename&gt; display information about an image.
+   ls &lt;imagename&gt; list brief directory of an image.
+   l  &lt;imagename&gt; list directory of an image.
+   ll &lt;imagename&gt; list detailed directory of an image.
+   e  &lt;imagename&gt; &lt;filename&gt; export file from image to stdout.
+   x  &lt;imagename&gt; [&lt;outputpath&gt;] extract all files from image to outputpath, or the current working directory if blank.
+   g  &lt;imagename&gt; &lt;filename&gt; get raw file from image to stdout.
+   p  &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; [[$|0x]&lt;addr&gt;] put stdin in filename on image, using file type and address [0x2000].
+   d  &lt;imagename&gt; &lt;filename&gt; delete file from image.
+   k  &lt;imagename&gt; &lt;filename&gt; lock file on image.
+   u  &lt;imagename&gt; &lt;filename&gt; unlock file on image.
+   n  &lt;imagename&gt; &lt;volname&gt; change volume name (ProDOS or Pascal).
+   cc65 &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; put stdin with cc65 header in filename on image, using file type and address from header.
+   dos140 &lt;imagename&gt; create a 140K DOS 3.3 image.
+   pro140 &lt;imagename&gt; &lt;volname&gt; create a 140K ProDOS image.
+   pro800 &lt;imagename&gt; &lt;volname&gt; create an 800K ProDOS image.
+   pas140 &lt;imagename&gt; &lt;volname&gt; create a 140K Pascal image.
+   pas800 &lt;imagename&gt; &lt;volname&gt; create an 800K Pascal image.
+   convert &lt;filename&gt; &lt;imagename&gt; uncompress a ShrinkIt file or disk image or convert a DiskCopy 4.2 image into a ProDOS disk image.
+</pre>
+For the commands that require a <tt>type</tt> parameter, their values depend on the operating system of the underlying image's operating system:
+<ul>
+<li><tt>DOS 3.x: A, B, I, T, S, R, a, b.</tt>
+<li><tt>Pascal: bad, code, text, info, data, graf, foto.</tt>
+<li><tt>ProDOS: bas, bin, sys, txt, rel, etc.; see ProdosFileTypes.properties for more.</tt>
+</ul>
+
+In order to feed AppleCommander standard input, a file would be specified with the <tt>input</tt> parameter for the task - like this:
+<pre>
+   &lt;appleCommander command="p" 
+                   <b>input="manifest.mf"</b> 
+                   imagename="${myDiskImage}" 
+                   filename="MANIFEST" 
+                   type="T" /&gt;
+</pre>
+AppleCommander ant tasks can be told to ignore errors with the <tt>failonerror</tt> parameter:
+<pre>
+   &lt;appleCommander command="p" 
+                   <b>failonerror="false"</b> 
+                   input="${hugeFileExpectFailure}" 
+                   imagename="${pro800image}" 
+                   filename="BLOWUP" 
+                   type="txt" /&gt;
+</pre> 

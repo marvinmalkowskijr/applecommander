@@ -1,0 +1,62 @@
+<html>
+
+<head>
+<title>AppleCommander UML Diagrams</title>
+</head>
+
+<style>
+body { font: 10pt verdana; }
+</style>
+
+<body bgcolor='white'>
+
+<p>
+<a href='../index.html'>AppleCommander Home Page</a>
+</p>
+
+<p>
+Generally, a Disk represents an Apple ][ disk image.  This can be size, any order, and any
+format.  The Disk class itself manages the varying disk order (DOS, ProDOS, or their variants)
+simply by the file extension.  Disks that are formatted with an operating system are managed
+by the subclasses of FormattedDisk.  The general user interface(s) can then work with a
+FormattedDisk without knowing about the specific operating system.
+</p>
+<center><img src='DiskClassDiagram.gif' alt='Disk Class Diagram'></center>
+<p>
+Somewhat surprisingly, a Disk can contain multiple FormattedDisks.  By structuring the disk image
+in this manner, the 800K DOS formats can be accomodated (yielding two 400K DOS FormattedDisks -
+which models the physical behavior rather nicely).  Additionally, other configurations
+can be accomodated in the future - Pascals multiple volume configuration or a ProDOS volume
+hosting DOS 3.3 and/or Pascal volumes.
+</p>
+
+<hr>
+
+<p>
+Each Disk contains multiple files.  The file is represented by a FileEntry.  You will note that
+the attributes exposed by the FileEntry interface are pretty generic.  To accomodate the various
+views available, the getFileColumnData method was added.  This method will, depending on the
+setting, return a standard view, a native view (mimics the native catalog/directory display), and
+a detailed view (giving all available data on the files).
+</p>
+<center><img src='FileEntryClassDiagram.gif' alt='FileEntry Class Diagram'></center>
+
+<hr>
+
+<p>
+In order to allow AppleCommander to export files easily, the concept of a FileFilter was added.
+A FileFilter simply takes the raw data from the FileEntry and then processes it according to the
+filter.  Adding new filters is as easy as implementing the FileFilter interface and then hooking
+it into the user interface!
+</p>
+<center><img src='FileFilterClassDiagram.gif' alt='FileFilter Class Diagram'></center>
+
+<hr>
+
+<p>
+Just to be complete, ProDOS yielded itself to a simple object heirarchy.
+</p>
+<center><img src='ProdosCommonEntryClassDiagram.gif' alt='ProdosCommonEntry Class Diagram'></center>
+
+</body>
+</html>

@@ -1,0 +1,188 @@
+<html>
+
+<head>
+<title>AppleCommander</title>
+</head>
+
+<style>
+body { font: 10pt monospace; }
+</style>
+
+<body bgcolor='white'>
+
+<p>
+A new release of AppleCommander is available!
+</p>
+
+<p>
+Version 1.3.1 introduces file viewing as well as John Matthews command-line version 
+of AppleCommander ("ac").  The beginnings of an AppleSoft compiler have been 
+added (strictly beta and incomplete).  Full gory details are listed below for both 
+the unannounced 1.3.0 as well as the current 1.3.1.
+</p>
+
+<p>
+AppleCommander is hosted on SourceForge. The home page is located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://applecommander.sourceforge.net/
+</p>
+
+<p>
+The SourceForge project page is located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://sourceforge.net/projects/applecommander/
+</p>
+
+<p>
+The files are located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://sourceforge.net/project/showfiles.php?group_id=67414
+</p>
+
+<p>
+John Matthews' command-line "ac" utility is available at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://www.wright.edu/~john.matthews/ac.html
+</p>
+
+<p>
+If you're interested, please take a peek and let me know what you think!<br>
+-Rob
+</p>
+
+<p>New for version 1.3.1 (2003-12-12):</p>
+
+<ul>
+<li>Short-cut keys have been implemented.<ul>
+  <li>From AppleCommander window:<ul>
+    <li>CTRL+O = Open a disk image</li>
+    <li>CTRL+C = Create a new disk image</li>
+    <li>CTRL+A = About...</li>
+    </ul>
+  </li>
+  <li>From disk window<ul>
+    <li>Toolbar shortcuts:<ul>
+      <li>F2 = Standard file view</li>
+      <li>F3 = Native file view</li>
+      <li>F4 = Detail file view</li>
+      <li>F5 = Show deleted files</li>
+      <li>CTRL+I = Import files wizard</li>
+      <li>CTRL+S = Save</li>
+      <li>CTRL+SHIFT+S = Save As</li>
+      </ul>
+    </li>
+    <li>Directory shortcuts (in addition to toolbar shortcuts)<ul>
+      <li>"+" = expand one level</li>
+      <li>"-" = close one level</li>
+      <li>CTRL+"+" = expand fully</li>
+      <li>CTRL+"-" = close fully</li>
+      </ul>
+    </li>
+    <li>File shortcuts (in addition to toolbar shortcuts)<ul>
+      <li>CTRL+E = Export file wizard</li>
+      <li>CTRL+C = Compile BASIC program (BETA)</li>
+      <li>CTRL+V = View file (later version)</li>
+      <li>CTRL+D = Delete file</li>
+      </ul>
+    </li>
+    </ul>
+  </li>
+  </ul>
+</li>
+<li>Spent time ensuring that buttons, context menus, and shortcuts are enabled or
+  disabled as appropriate.</li>
+<li>Save does not allow the disk image location to be chosen for new images:<ul>
+  <li>Implemented Save As</li>
+  <li>A save on a new image invokes Save As</li>
+  </ul>
+</li>
+<li>File preview supports:<ul>
+  <li>BASIC programs (Applesoft and Integer BASIC); Applesoft BASIC is colored</li>
+  <li>Graphics images (same as supported by the graphics export function)</li>
+  <li>Appleworks (database, spreadsheet, word processor)</li>
+  <li>Text files</li>
+  <li>Hex dump of all the above</li>
+  <li>"Raw" format of all of the above; this includes all data as read from disk
+    including length and starting address as well as full sectors/blocks</li>
+  <li>Shortcuts available:<ul>
+  	<li>F2 = Native format view (as applicable)</li>
+  	<li>F3 = Hex dump view</li>
+  	<li>F4 = Raw hex dump of disk bytes (includes length or address start along
+  	       with all bytes stored on disk - a multiple of 256 or 512 depending
+  	       on disk format)</li>
+  	<li>CTRL+A = Select all (only text formats)</li>
+  	<li>CTRL+C = Copy to clipboard (only text formats)</li>
+  	<li>CTRL+P = Print</li>
+  	</ul>
+  </li>
+  </ul>
+</li>
+<li>Printing is available from the file preview.</li>
+<li>Copy is avilable from file preview except for images.</li>
+<li>Opening an invalid disk image (or a file that is not a disk image) no longer
+  crashes AppleCommander.</li>
+<li>Provide a command-line interface - John Matthews "ac" is now supplied as part
+  of the AppleCommander distribution.  If AppleCommander gets no command-line
+  arguments, the GUI version is launched.  Otherwise, AppleCommander reserves
+  the following messages:
+  <blockquote>
+  		-swt = force SWT version<br>
+  		-swing = force Swing version (N/A - may be removed)<br>
+  		-command = force command interpreter (not done - may be superceded by
+  		    the "ac" utility)<br>
+  		-help or -? = general help messages
+  </blockquote>
+  Everything else is passed on to John's "ac" command-line version (from the
+  application help):
+  <blockquote>
+		AppleCommander command line options:<br>
+		-l <imagename> list directory of image.<br>
+		-e <filename> <imagename> export file from image to stdout.<br>
+		-g <filename> <imagename> get raw file from image to stdout.<br>
+		-p <destname> <type> <addr> <imagename> put stdin
+		   in destname on image, using file type and address.<br>
+		-d <filename> <imagename> delete file from image.<br>
+		-p140 <imagename> <volname> create a 140K ProDOS image.<br>
+		-p800 <imagename> <volname> create a 800K ProDOS image.
+  </blockquote>
+</li>
+</ul>
+
+
+
+
+<p>New for version 1.3.0 (2003-12-05):</p>
+
+<ul>
+<li>HDV disks are not always created to their full capacity.
+  AppleCommander, however, assumes that the size of the file on disk
+  is the size of the disk.  (Really!)  This is an issue because the
+  ProDOS bitmap indicates there is a certain amount of space and
+  AppleCommander just assumes that the data exists.</li>
+<li>Incorporated fixes from John Matthews.  See:<br>
+	&nbsp;&nbsp;&nbsp;&nbsp;http://www.wright.edu/~john.matthews/ac.html</li>
+<li>Early release of Applesoft BASIC compiler.  This currently is
+  limited to assembly of small programs.  If a command is not
+  compiled, you are likely to just get an error about expecting a
+  line number.  Expressions are not very complete.  Supported
+  commands are:<br>
+  <blockquote>
+      END, FLASH, FOR, GOTO, GR, HCOLOR, HGR, HGR2, HOME, HPLOT,
+      HTAB, INVERSE, NEXT, NORMAL, PRINT, RETURN, TEXT, VTAB
+  </blockquote>
+  Unsupported commands are:
+  <blockquote>
+      ABS, AND, ASC, AT, ATN, CALL, CHR$, CLEAR, COLOR=, CONT, COS,
+      DATA, DEF, DEL, DIM, DRAW, EXP, FN, FRE, GET, GOSUB, GR, HIMEM:,
+      HLIN, IF, IN#, INPUT, INT, LEFT$, LEN, LET, LIST, LOAD, LOG,
+      LOMEM:, MID$, NEW, NOT, NOTRACE, ON, ONERR, OR, PDL, PEEK, PLOT,
+      POKE, POP, POS, PR#, READ, RECALL, REM, RESTORE, RESUME, RIGHT$,
+      RND, ROT=, RUN, SAVE, SCALE=, SCRN, SGN, SHLOAD, SIN, SPC,
+      SPEED=, SQR, STEP, STOP, STORE, STR$, TAB, TAN, THEN, TO, TRACE,
+      USR, VAL, VLIN, WAIT, XDRAW, &
+  </blockquote>
+  Note that the compiler is not very sophisticated.</li>
+<li>Updated build notes and process.</li>
+<li>DELETE does not seem to delete in all circumstances.  (JM caught
+  this one.)</li>
+</ul>
+
+<p>
+[The End.]
+</p>

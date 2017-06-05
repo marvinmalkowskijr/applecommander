@@ -1,0 +1,74 @@
+<html>
+
+<head>
+<title>AppleCommander</title>
+</head>
+
+<style>
+body { font: 10pt monospace; }
+</style>
+
+<body bgcolor='white'>
+
+<p>
+A new release of AppleCommander is available.  Version 1.2.1 is 
+primarily a clean-up operation.  However, there is a bit of new 
+functionality - AppleWorks Spread Sheet (ASP) and Data Base (ADB) 
+files can both be exported to a *.csv file format.
+</p>
+
+<ul>
+<li>Now carries margin setting through, sets font to Courier New
+  (more realistic formatting), and fixes boldface not being
+  turned off correctly when converting AWP files to RTF format.</li>
+<li>Import could/should choose the filetype based upon the file
+  extension for files being imported. Mostly useful for ProDOS;
+  unless a filetype mapping is introduced.</li>
+<li>Export of AppleWorks Data Base files.</li>
+<li>Export of AppleWorks Spread Sheet files.</li>
+<li>Fixed minor issue with ProDOS disks where files at the 128K
+  border would be grown (incorrectly) into a Tree file (instead 
+  of a Sapling).</li>
+<li>Import of multiple files fails after multiple imports.  This
+  was an issue with ProDOS files >128K ("Tree" files).  The
+  delete code didn't handle the master index block
+  appropriately when blocks numbered zero were present
+  (normally indicating the end of file).</li>
+<li>DOS 3.3 was not writing correct number of sectors if a file
+  was more than 256 sectors long.</li>
+<li>DOS 3.3 was not managing deleted file entries appropriately
+  and tried to work with track $FF.</li>
+<li>Fixed offset calculation for 800K DOS organized disks.  This
+  primarily affected UniDOS.</li>
+<li>Import menu should be in directory pane instead of file pane.</li>
+<li>The information tab does not get updated.  Now that the disk
+  can be modified, this page needs to be updated when shown.</li>
+</ul>
+
+<p>
+I'm still putzing with a compiled version for Linux and Windows, so 
+they haven't shown up as of yet.
+</p>
+
+<p>
+AppleCommander is hosted on SourceForge. The home page is located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://applecommander.sourceforge.net/
+</p>
+
+<p>
+The SourceForge project page is located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://sourceforge.net/projects/applecommander/
+</p>
+
+<p>
+The files are located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://sourceforge.net/project/showfiles.php?group_id=67414
+</p>
+
+<p>
+If you're interested, please take a peek and let me know!<br>
+-Rob 
+</p>
+
+</body>
+</html>

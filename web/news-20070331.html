@@ -1,0 +1,68 @@
+<html>
+
+<head>
+<title>AppleCommander</title>
+</head>
+
+<style>
+body { font: 10pt monospace; }
+</style>
+
+<body bgcolor='white'>
+
+<p>
+A new release of AppleCommander is available!
+</p>
+
+<p>
+Version 1.3.4 adds support for Apple Pascal 800K images; OS X issues resolved; Pascal images are now writeable;
+and some work towards internationalization has been done.
+</p>
+
+<p>
+AppleCommander is hosted on SourceForge. The home page is located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://applecommander.sourceforge.net/
+</p>
+
+<p>
+The SourceForge project page is located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://sourceforge.net/projects/applecommander/
+</p>
+
+<p>
+The files are located at:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;http://sourceforge.net/project/showfiles.php?group_id=67414
+</p>
+
+<p>
+If you're interested, please take a peek and let me know what you think!
+Contributions are more than welcome.
+If anyone wants to create an engaging GUI, that would be a great addition.
+Any anything else you think should be in AppleCommander...<br>
+-Rob 
+</p>
+
+<p>New for version 1.3.4 (2007-03-31):</p>
+
+<ul>
+<li>Started using the SWT S-Leak application to test for application resource leakage.</li>
+<li>Reports of a few issues with 800K images.  UniDOS in particular doesn't appear to be
+  recognized appropriately.  This was due to a mix-up in setting the the image ordering.</li>
+<li>Fixed the bug where the import of a binary file does not set the address for DOS images.</li>
+<li>Fixed bug that where a file cound not be exported as raw binary.  (Crashed AppleCommander.)</li>
+<li>Raw binary files may now be imported - just check the raw image checkbox in the import
+  wizard.</li>
+<li>Prepare for internationalization (I18N).  Started as a simplification process but it
+  got carried away.  Text is stored in text bundles throughout the code.  The files
+  end with ____Bundle.properties.  The groupings are Storage, Compiler, Ui, and
+  Text; directories relate to the package.  Contributions are more than welcome
+  seeing as I know very little German and it's unlikely that I'll get my wife to
+  spend time translating to Spanish.</li>
+<li>Updates per Eclipse 3.0 recommendations.</li>
+<li>Resolve OS X issues where window cannot come to the foreground. (J Matthews)</li>
+<li>Add Apple Pascal writing capability. (J Matthews)</li>
+</ul>
+
+<p>
+[The End.]
+</p>
