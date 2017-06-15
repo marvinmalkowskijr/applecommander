@@ -19,8 +19,9 @@ package com.webcodepro.applecommander.ui;
  * 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
 
+import java.io.FileOutputStream;
 import java.io.IOException;
-
+import java.io.PrintStream;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
@@ -45,7 +46,7 @@ public class AntTask extends Task
 		 * dos140: <imagename> <volname>
 		 * pro140/pro800: <imagename> <volname>
 		 * pas140/pas800: <imagename> <volname>
-		 * convert: <filename> <imagename>
+		 * convert: <filename> <imagename> [<sizeblocks>]
 		 */
 		if (_command.equals("i"))
 		{
@@ -64,9 +65,14 @@ public class AntTask extends Task
 		}
 		else if (_command.equals("e") || _command.equals("g"))
 		{
+			PrintStream outfile = System.out;
 			try
 			{
-				com.webcodepro.applecommander.ui.ac.getFile(_imageName, _fileName, _command.equals("e"));
+				if (_output != null)
+				{
+					outfile = new PrintStream(new FileOutputStream(_output));
+				}
+				com.webcodepro.applecommander.ui.ac.getFile(_imageName, _fileName, _command.equals("e"), outfile);
 			}
 			catch (Exception ex)
 			{
@@ -226,7 +232,7 @@ public class AntTask extends Task
 		{
 			try
 			{
-				com.webcodepro.applecommander.ui.ac.convert(_fileName, _imageName);
+				com.webcodepro.applecommander.ui.ac.convert(_fileName, _imageName, Integer.parseInt(_sizeBlocks));
 			}
 			catch (IOException io)
 			{
@@ -252,6 +258,11 @@ public class AntTask extends Task
 		_input = input;
 	}
 
+	public void setOutput(String output)
+	{
+		_output = output;
+	}
+
 	public void setImageName(String imageName)
 	{
 		_imageName = imageName;
@@ -267,9 +278,9 @@ public class AntTask extends Task
 		_outputPath = outputPath;
 	}
 
-	public void setVolumeName(String volumeName)
+	public void setVolName(String volName)
 	{
-		_volName = volumeName;
+		_volName = volName;
 	}
 
 	public void setType(String type)
@@ -280,6 +291,11 @@ public class AntTask extends Task
 	public void setAddress(String address)
 	{
 		_address = address;
+	}
+
+	public void setSizeBlocks(String sizeBlocks)
+	{
+		_sizeBlocks = sizeBlocks;
 	}
 
 	public void setFailOnError(String failonerror)
@@ -294,6 +310,8 @@ public class AntTask extends Task
 
 	String _input = null;
 
+	String _output = null;
+
 	String _command = null;
 
 	String _imageName = null;
@@ -307,4 +325,6 @@ public class AntTask extends Task
 	String _type = null;
 
 	String _address = "0x2000";
+
+	String _sizeBlocks = "0";
 }

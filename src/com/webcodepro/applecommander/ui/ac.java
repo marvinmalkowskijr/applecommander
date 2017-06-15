@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,9 +61,11 @@ import com.webcodepro.applecommander.util.TextBundle;
  * -ls &lt;imagename&gt; [&lt;imagename&gt;] list brief directory of image(s).
  * -l  &lt;imagename&gt; [&lt;imagename&gt;] list directory of image(s).
  * -ll &lt;imagename&gt; [&lt;imagename&gt;] list detailed directory of image(s).
- * -e  &lt;imagename&gt; &lt;filename&gt; export file from image to stdout.
+ * -e  &lt;imagename&gt; &lt;filename&gt; [&lt;output&gt;] export file from image to stdout
+ *     or to an output file. 
  * -x  &lt;imagename&gt; [&lt;directory&gt;] extract all files from image to directory.
- * -g  &lt;imagename&gt; &lt;filename&gt; get raw file from image to stdout.
+ * -g  &lt;imagename&gt; &lt;filename&gt; [&lt;output&gt;] get raw file from image to stdout
+ *     or to an output file. 
  * -p  &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; [[$|0x]&lt;addr&gt;] put stdin
  *     in filename on image, using file type and address [0x2000].
  * -d  &lt;imagename&gt; &lt;filename&gt; delete file from image.
@@ -99,11 +102,13 @@ public class ac {
 			} else if ("-ll".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
 				showDirectory(args, FormattedDisk.FILE_DISPLAY_DETAIL);
 			} else if ("-e".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
-				getFile(args[1], args[2], true);
+				getFile(args[1], args[2], true,
+					(args.length > 3 ? new PrintStream(new FileOutputStream(args[3])) : System.out));
 			} else if ("-x".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
 				getFiles(args[1], (args.length > 2 ? args[2] : ""));
 			} else if ("-g".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
-				getFile(args[1], args[2], false);
+				getFile(args[1], args[2], false,
+					(args.length > 3 ? new PrintStream(new FileOutputStream(args[3])) : System.out));
 			} else if ("-p".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
 				putFile(args[1], new Name(args[2]), args[3],
 					(args.length > 4 ? args[4] : "0x2000"));
@@ -130,7 +135,10 @@ public class ac {
 			} else if ("-pro800".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
 				createProDisk(args[1], args[2], Disk.APPLE_800KB_DISK);
 			} else if ("-convert".equalsIgnoreCase(args[0])) { //$NON-NLS-1$
-				convert(args[1], args[2]);
+				if (args.length > 3)
+					convert(args[1], args[2], Integer.parseInt(args[3]));
+				else
+					convert(args[1], args[2]);
 			} else {
 				help();
 			}
@@ -203,7 +211,10 @@ public class ac {
 					entry.setAddress(stringToInt(address));
 				}
 				formattedDisk.save();
+			} else {
+				throw new IOException("Unable to create entry...");
 			}
+				
 		}
 		else
 			throw new IOException(textBundle.get("CommandLineSDKReadOnly"));  //$NON-NLS-1$
@@ -275,11 +286,13 @@ public class ac {
 	 * Get the file named filename from the disk named imageName; the file is
 	 * filtered according to its type and sent to &lt;stdout>.
 	 */
-	static void getFile(String imageName, String fileName, boolean filter)
+	static void getFile(String imageName, String fileName, boolean filter, PrintStream out)
 		throws IOException {
 		Disk disk = new Disk(imageName);
 		Name name = new Name(fileName);
 		FormattedDisk[] formattedDisks = disk.getFormattedDisks();
+		if (out == null)
+			out = System.out;
 		for (int i = 0; i < formattedDisks.length; i++) {
 			FormattedDisk formattedDisk = formattedDisks[i];
 			FileEntry entry = name.getEntry(formattedDisk);
@@ -289,10 +302,10 @@ public class ac {
 					if (ff instanceof BinaryFileFilter)
 						ff = new HexDumpFileFilter();
 					byte[] buf = ff.filter(entry);
-					System.out.write(buf, 0, buf.length);
+					out.write(buf, 0, buf.length);
 				} else {
 					byte[] buf = entry.getFileData();
-					System.out.write(buf, 0, buf.length);
+					out.write(buf, 0, buf.length);
 				}
 			} else {
 				System.err.println(textBundle.format(
@@ -496,7 +509,7 @@ public class ac {
 	/**
 	 * Create a DOS disk image.
 	 */
-	static void createDosDisk(String fileName, int imageSize)
+	public static void createDosDisk(String fileName, int imageSize)
 		throws IOException {
 		ByteArrayImageLayout layout = new ByteArrayImageLayout(imageSize);
 		ImageOrder imageOrder = new DosOrder(layout);
@@ -507,7 +520,7 @@ public class ac {
 	/**
 	 * Create a Pascal disk image.
 	 */
-	static void createPasDisk(String fileName, String volName, int imageSize)
+	public static void createPasDisk(String fileName, String volName, int imageSize)
 		throws IOException {
 		ByteArrayImageLayout layout = new ByteArrayImageLayout(imageSize);
 		ImageOrder imageOrder = new ProdosOrder(layout);
@@ -518,7 +531,7 @@ public class ac {
 	/**
 	 * Create a ProDOS disk image.
 	 */
-	static void createProDisk(String fileName, String volName, int imageSize)
+	public static void createProDisk(String fileName, String volName, int imageSize)
 		throws IOException {
 		ByteArrayImageLayout layout = new ByteArrayImageLayout(imageSize);
 		ImageOrder imageOrder = new ProdosOrder(layout);
@@ -531,7 +544,7 @@ public class ac {
 	 * 
 	 * DiskCopy 4.2 image - convert it to a ProDOS image
 	 * SDK disk image - unpack it to a disk image
-	 * ShrinkIt file bundle [future] - unpack files onto a disk image sized to fit
+	 * ShrinkIt file bundle - unpack files onto a disk image sized to fit
 	 */
 	static void convert(String shrinkName, String imageName)
 		throws IOException {
@@ -543,11 +556,11 @@ public class ac {
 	 * 
 	 * DiskCopy 4.2 image - convert it to a ProDOS image
 	 * SDK disk image - unpack it to a disk image
-	 * ShrinkIt file bundle [future] - unpack files onto a disk image sized to fit
+	 * ShrinkIt file bundle - unpack files onto a disk image sized to fit, or as specified in numbers of blocks
 	 */
 	static void convert(String shrinkName, String imageName, int imageSize)
 		throws IOException {
-		Disk disk = new Disk(shrinkName);
+		Disk disk = new Disk(shrinkName, imageSize);
 		disk.setFilename(imageName);
 		disk.save();
 	}
