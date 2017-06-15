@@ -40,9 +40,11 @@ For a quick list of ac options, enter the <b><b><tt>-h</tt></b></b> command:
     -ls &lt;imagename&gt; [&lt;imagename&gt;] list brief directory of image(s).
     -l  &lt;imagename&gt; [&lt;imagename&gt;] list directory of image(s).
     -ll &lt;imagename&gt; [&lt;imagename&gt;] list detailed directory of image(s).
-    -e  &lt;imagename&gt; &lt;filename&gt; export file from image to stdout.
+    -e  &lt;imagename&gt; &lt;filename&gt; [&lt;output&gt;] export file from image to stdout
+        or to an output file.
     -x  &lt;imagename&gt; [&lt;directory&gt;] extract all files from image to directory.
-    -g  &lt;imagename&gt; &lt;filename&gt; get raw file from image to stdout.
+    -g  &lt;imagename&gt; &lt;filename&gt; [&lt;output&gt;] get raw file from image to stdout
+        or to an output file.
     -p  &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; [[$|0x]&lt;addr&gt;] put stdin
         in filename on image, using file type and address [0x2000].
     -d  &lt;imagename&gt; &lt;filename&gt; delete file from image.
@@ -57,8 +59,8 @@ For a quick list of ac options, enter the <b><b><tt>-h</tt></b></b> command:
     -pro800 &lt;imagename&gt; &lt;volname&gt; create an 800K ProDOS image.
     -pas140 &lt;imagename&gt; &lt;volname&gt; create a 140K Pascal image.
     -pas800 &lt;imagename&gt; &lt;volname&gt; create an 800K Pascal image.
-    -unshrink &lt;shrinksdk&gt; &lt;imagename&gt; uncompress a ShrinkIt disk image
-              into a normal disk image. 
+    -convert &lt;filename&gt; &lt;imagename&gt; [&lt;sizeblocks&gt;] uncompress a ShrinkIt or Binary
+             II file; or convert a DiskCopy 4.2 image into a ProDOS disk image.
 </pre>
 <p>
 Examples of some typical command options follow:

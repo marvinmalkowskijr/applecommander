@@ -39,16 +39,16 @@ Once you have the <tt>taskdef</tt> defined, it can be called from within ant lik
    &lt;!-- Call AppleCommander to print information about the disk image --&gt;
    &lt;appleCommander command="i" imagename="${myDiskImage}" /&gt;
 </pre>
-The commands that the ant task understands generally mirror those of the command line.
+The values for <tt>command</tt> that the ant task understands generally mirror those of the command line.
 Here's a list of them, along with their required and optional parameters:
 <pre>
    i  &lt;imagename&gt; display information about an image.
    ls &lt;imagename&gt; list brief directory of an image.
    l  &lt;imagename&gt; list directory of an image.
    ll &lt;imagename&gt; list detailed directory of an image.
-   e  &lt;imagename&gt; &lt;filename&gt; export file from image to stdout.
+   e  &lt;imagename&gt; &lt;filename&gt; [&lt;output&gt;] export file from image to stdout or to an output file.
    x  &lt;imagename&gt; [&lt;outputpath&gt;] extract all files from image to outputpath, or the current working directory if blank.
-   g  &lt;imagename&gt; &lt;filename&gt; get raw file from image to stdout.
+   g  &lt;imagename&gt; &lt;filename&gt; [&lt;output&gt;] get raw file from image to stdout or to an output file.
    p  &lt;imagename&gt; &lt;filename&gt; &lt;type&gt; [[$|0x]&lt;addr&gt;] put stdin in filename on image, using file type and address [0x2000].
    d  &lt;imagename&gt; &lt;filename&gt; delete file from image.
    k  &lt;imagename&gt; &lt;filename&gt; lock file on image.
@@ -60,7 +60,7 @@ Here's a list of them, along with their required and optional parameters:
    pro800 &lt;imagename&gt; &lt;volname&gt; create an 800K ProDOS image.
    pas140 &lt;imagename&gt; &lt;volname&gt; create a 140K Pascal image.
    pas800 &lt;imagename&gt; &lt;volname&gt; create an 800K Pascal image.
-   convert &lt;filename&gt; &lt;imagename&gt; uncompress a ShrinkIt file or disk image or convert a DiskCopy 4.2 image into a ProDOS disk image.
+   convert &lt;filename&gt; &lt;imagename&gt; [&lt;sizeblocks&gt;] uncompress a ShrinkIt or Binary II file; or convert a DiskCopy 4.2 image into a ProDOS disk image.
 </pre>
 For the commands that require a <tt>type</tt> parameter, their values depend on the operating system of the underlying image's operating system:
 <ul>
@@ -77,6 +77,15 @@ In order to feed AppleCommander standard input, a file would be specified with t
                    filename="MANIFEST" 
                    type="T" /&gt;
 </pre>
+
+In order to extract a file from an image to a real file, the real file would be specified with the <tt>output</tt> parameter for the task - like this:
+<pre>
+   &lt;appleCommander command="g" 
+                   imagename="${myDiskImage}" 
+                   filename="MANIFEST" 
+                   <b>output="manifest.mf"</b> /&gt;
+</pre>
+
 AppleCommander ant tasks can be told to ignore errors with the <tt>failonerror</tt> parameter:
 <pre>
    &lt;appleCommander command="p" 

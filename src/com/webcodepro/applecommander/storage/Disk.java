@@ -165,6 +165,7 @@ public class Disk {
 	/**
 	 * Construct a Disk with the given byte array.
 	 */
+
 	protected Disk(String filename, ImageOrder imageOrder) {
 		this.imageOrder = imageOrder;
 		this.filename = filename;
@@ -176,6 +177,30 @@ public class Disk {
 	 * Read in the entire contents of the file.
 	 */
 	public Disk(String filename) throws IOException {
+		this(filename, 0, false);
+	}
+
+	/**
+	 * Construct a Disk and load the specified file.
+	 * Read in the entire contents of the file.
+	 */
+	public Disk(String filename, boolean knownProDOSOrder) throws IOException {
+		this(filename, 0, knownProDOSOrder);
+	}
+
+	/**
+	 * Construct a Disk and load the specified file.
+	 * Read in the entire contents of the file.
+	 */
+	public Disk(String filename, int startBlocks) throws IOException {
+		this(filename, startBlocks, false);
+	}
+
+	/**
+	 * Construct a Disk and load the specified file.
+	 * Read in the entire contents of the file.
+	 */
+	public Disk(String filename, int startBlocks, boolean knownProDOSOrder) throws IOException {
 		this.filename = filename;
 		int diskSize = 0;
 		byte[] diskImage = null;
@@ -184,7 +209,7 @@ public class Disk {
 		if (isSDK() || isSHK() || isBXY()) {
 			// If we have an SDK, unpack it and send along the byte array
 			// If we have a SHK, build a new disk and unpack the contents on to it
-			diskImage = com.webcodepro.shrinkit.Utilities.unpackSHKFile(filename);
+			diskImage = com.webcodepro.shrinkit.Utilities.unpackSHKFile(filename, startBlocks);
 			diskSize = diskImage.length;
 			// Since we don't want to overwrite their shrinkit with a raw ProDOS image,
 			// add a .po extension to it
@@ -246,11 +271,26 @@ public class Disk {
 				// First, test the really-really likely orders/formats for
 				// 5-1/4" disks.
 				imageOrder = dosOrder;
-				if (isProdosFormat() || isDosFormat()) {
+				if ((isProdosFormat() || isDosFormat()) && !knownProDOSOrder) {
 					rc = 0;
 				} else {
 					imageOrder = proDosOrder;
-					if (isProdosFormat() || isDosFormat()) {
+					if (knownProDOSOrder || isProdosFormat() || isDosFormat()) {
+						rc = 0;
+					}
+				}
+				if (rc == -1) {
+					/*
+				 	* Check filenames for something deterministic.
+				 	*/
+					if (isProdosOrder() || is2ImgOrder()) {
+						imageOrder = proDosOrder;
+						rc = 0;
+					} else if (isDosOrder()) {
+						imageOrder = dosOrder;
+						rc = 0;
+					} else if (isNibbleOrder()) {
+						imageOrder = new NibbleOrder(diskImageManager);
 						rc = 0;
 					}
 				}

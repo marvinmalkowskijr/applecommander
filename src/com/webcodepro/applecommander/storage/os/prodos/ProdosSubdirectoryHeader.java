@@ -59,6 +59,7 @@ public class ProdosSubdirectoryHeader extends ProdosCommonDirectoryHeader {
 	public void setParentPointer(int block) {
 		byte[] data = readFileEntry();
 		AppleUtil.setWordValue(data, 0x23, block);
+		writeFileEntry(data);
 	}
 	
 	/**
@@ -69,10 +70,28 @@ public class ProdosSubdirectoryHeader extends ProdosCommonDirectoryHeader {
 	}
 	
 	/**
+	 * Sets the number of the file entry within the parent block.
+	 */
+	public void setParentEntry(int entryNum) {
+		byte[] data = readFileEntry();
+		data[0x25] = (byte) entryNum;
+		writeFileEntry(data);
+	}
+	
+	/**
 	 * Return the length of the parent entry.
 	 */
 	public int getParentEntryLength() {
 		return AppleUtil.getWordValue(readFileEntry(), 0x26);
+	}
+	
+	/**
+	 * Sets the number of the file entry within the parent block.
+	 */
+	public void setParentEntryLength(int length) {
+		byte[] data = readFileEntry();
+		data[0x26] = (byte) length;
+		writeFileEntry(data);
 	}
 	
 	/**

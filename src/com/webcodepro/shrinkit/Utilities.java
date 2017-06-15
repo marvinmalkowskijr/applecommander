@@ -56,17 +56,34 @@ public class Utilities
 	 */
 	public static byte[] unpackSHKFile(String fileName) throws IOException
 	{
+		return unpackSHKFile(fileName, 0);
+	}
+
+	/**
+	 * Interpret a NuFile/NuFX/Shrinkit archive as a full disk image.
+	 * 
+	 * @return byte[] buffer containing full disk of data; null if unable to
+	 *         read
+	 * @throws IllegalArgumentException
+	 *             if the filename is not able to be read
+	 * @throws IOException
+	 *             the file has some malformed-ness about it
+	 */
+	public static byte[] unpackSHKFile(String fileName, int startBlocks) throws IOException
+	{
 		TextBundle textBundle = StorageBundle.getInstance();
 		byte dmgBuffer[] = null;
 		File file = new File(fileName);
 		if (file.isDirectory() || !file.canRead())
 		{
-			throw new IllegalArgumentException(textBundle.format("NotAFile", fileName, 1)); //$NON-NLS-1$ 
+			throw new IOException(textBundle.format("NotAFile", fileName, 1)); //$NON-NLS-1$ 
 		}
 		InputStream is = new FileInputStream(file);
 		NuFileArchive a = new NuFileArchive(is);
 		// If we need to build a disk to hold files (i.e. .shk vs. .sdk), how big would that disk need to be?
 		int newDiskSize = Disk.sizeToFit(a.getArchiveSize());
+		if (startBlocks > 0)
+			newDiskSize = startBlocks*512;
 		ByteArrayImageLayout layout = new ByteArrayImageLayout(newDiskSize);
 		ImageOrder imageOrder = new ProdosOrder(layout);
 		// Create a new disk in anticipation of unpacking files - we don't actually know if we'll need it yet, though.
@@ -113,12 +130,12 @@ public class Utilities
 				}
 				catch (Exception ex)
 				{
-					System.out.println(ex);
+					throw new IOException(ex.getMessage());
 				}
 			}
 			try
 			{
-				if (dataFork != null)
+				if ((dataFork != null) || (resourceFork != null))
 				{
 					Name name = new Name(b.getFilename());
 					newFile = (ProdosFileEntry)name.createEntry(pdDisk);
@@ -148,7 +165,7 @@ public class Utilities
 			}
 			catch (Exception ex)
 			{
-				System.out.println(ex);
+				throw new IOException(ex.getMessage());
 			}
 		}
 		if (dmgBuffer != null)
@@ -165,15 +182,19 @@ public class Utilities
 	 * 
 	 * Reads the data from a thread
 	 * 
-	 * @return byte[] buffer
+	 * @returns byte[] buffer, possibly null
 	 */
 	public static byte[] readThread(ThreadRecord thread) throws IOException
 	{
-		thread.readThreadData(new LittleEndianByteInputStream(thread.getRawInputStream()));
-		InputStream fis = thread.getInputStream();
-		byte[] buffer = new byte[(int) (thread.getThreadEof())];
-		fis.read(buffer, 0, buffer.length);
-		fis.close();
+		byte[] buffer = null;
+		if (thread != null)
+		{
+			thread.readThreadData(new LittleEndianByteInputStream(thread.getRawInputStream()));
+			InputStream fis = thread.getInputStream();
+			buffer = new byte[(int) (thread.getThreadEof())];
+			fis.read(buffer, 0, buffer.length);
+			fis.close();
+		}
 		return buffer;
 	}
 }
